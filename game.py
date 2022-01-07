@@ -20,7 +20,7 @@ class Game:
 
     def valid_moves(self):
         moves = ~ (self.p1 | self.p2)
-        return set(np.where(moves.flatten())[0])
+        return moves.flatten()
 
     def is_winner(self):
         return (

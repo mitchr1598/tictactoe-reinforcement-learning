@@ -17,13 +17,12 @@ class Network:
         self.move_maker = tf.keras.Sequential([self.model,
                                                 tf.keras.layers.Softmax()])
 
-    def choose_move(self, p1_board: np.array, p2_board: np.array, valid_moves: set):
+    def choose_move(self, p1_board: np.array, p2_board: np.array, valid_moves: set) -> (int, np.array):
         merged = np.concatenate((p1_board, p2_board), axis=1)
-        predictions = self.move_maker.predict(np.array([merged]))
-        best_moves = np.argsort(predictions[0])[::-1]
-        for move in best_moves:
-            if move in valid_moves:
-                return move
+        naive_predictions = self.move_maker.predict(np.array([merged]))  # Not considering valid moves
+        predictions = naive_predictions * valid_moves
+        predictions = predictions / predictions.sum()  # Removes invalid moves and renormalizes
+        return np.argmax(predictions), predictions  # A flattend array of the best moves in order
 
 
 def main():
